@@ -1,0 +1,24 @@
+{
+  "name": "vue",
+  "version": "1.0.0",
+  "description": "rest api fullstack vue example",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "vue",
+    "rest",
+    "api"
+  ],
+  "author": "Ivan Suntsov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ru" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="./css/style.css" type="text/css" rel="stylesheet">
+    <title>Banki.shop</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container" id="app" v-cloak>
+    <div v-if="loading">
+        <Loader/>
+    </div>
+    <div v-else>
+        <header class="header">
+            <section class="header__content _container">
+                <div class="header__menu">
+                    <nav class="menu__body">
+                        <ul class="menu__list">
+                            <li><a href="#" class="menu__link">Каталог</a></li>
+                            <li><a href="#" class="menu__link">Доставка</a></li>
+                            <li><a href="#" class="menu__link">Оплата</a></li>
+                            <li><a href="#" class="menu__link">Контакты</a></li>
+                            <li><a href="#" class="menu__link">О компании</a></li>
+                        </ul>
+                    </nav>
+                    <form class="search" @submit.prevent="changeSearch">
+                        <input
+                            type="text"
+                            class="search_input"
+                            placeholder="Поиск по названию картины"
+                            v-model="search_input"
+                        >
+                        <button
+                            class="button button__search"
+                            type="submit"
+                        >Найти
+                        </button>
+                    </form>
+                </div>
+            </section>
+        </header>
+        <main class="page">
+            <section class="main">
+                <div class="main__container _container">
+                    <div class="caption">
+                        <span>Картины эпохи Возрождения</span>
+                    </div>
+                    <div class="cards">
+
+                        <div class="card" v-for="picture in searchedPictures" :key="picture.id">
+
+                            <div v-if="!picture.sold" class="card__description">
+                                <picture>
+                                    <img class="card__pic"
+                                         :src="picture.img"
+                                         alt="картина"
+                                         pic="picture.name"
+                                         @click="showModal(picture.id)">
+                                </picture>
+                                <div class="card__name" @click="showModal(picture.id)">
+                                    {{picture.name}}
+                                </div>
+                                <div class="card__purchase">
+                                    <div class="card__cost">
+                                        <div class="card__price">
+                                            {{picture.price}}
+                                        </div>
+                                        <div class="card__discount">
+                                            {{picture.discount}}
+                                        </div>
+                                    </div>
+                                    <button class="button card__button"
+                                            :class="{basket: picture.basket}"
+                                            @click="toBasket(picture.id)"
+                                    >
+                                        <span v-if="!picture.basket">Купить</span>
+                                        <span v-else><img src="img/feather_check.png" alt="">В корзине</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div v-else class="card__description card__sold">
+                                <picture>
+                                    <img class="card__pic"
+                                         :src="picture.img"
+                                         alt="картина"></picture>
+                                <div class="card__name">
+                                    {{picture.name}}
+                                </div>
+                                <div class="card__purchase">
+                                    <div class="card__cost">
+                                        <div class="card__price"></div>
+                                        <div class="card__discount">
+                                            Продана на аукционе
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <modal v-show="isModalVisible" @close="closeModal">
+                            <slot>
+                                <div class="modal-name" slot="header">{{modalPicture.name}}</div>
+                                <div class="modal-price" slot="header">{{modalPicture.price}}</div>
+                                <img class="modal_pic" slot="body" :src="modalPicture.img">
+                            </slot>
+                        </modal>
+                    </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <section class="footer__content _container">
+                <div class="footer__menu">
+                    <nav class="foot__body">
+                        <ul class="foot__list">
+                            <li><a href="#" class="foot__link">Каталог</a></li>
+                            <li><a href="#" class="foot__link">Доставка</a></li>
+                            <li><a href="#" class="foot__link">Оплата</a></li>
+                            <li><a href="#" class="foot__link">Контакты</a></li>
+                            <li><a href="#" class="foot__link">О компании</a></li>
+                        </ul>
+                    </nav>
+                    <div class="footer__contacts">
+                        <div class="footer__phone">
+                            <img src="img/phone.png" alt="phone">
+                            <span>+7 (812) 555-55-55</span>
+                        </div>
+                        <div class="footer__address">
+                            <img src="img/address.png" alt="address">
+                            <span>г. Санкт-Петербург, ул. Ефимова, 3</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </footer>
+    </div>
+</div>
+
+
+<script type="module" src="./js/front.js"></script>
+<script type="text/x-template" id="modal">
+    <transition name="modal-fade">
+        <div class="modal-backdrop" role="dialog">
+            <div class="modal" ref="modal">
+                <header class="modal-header">
+                    <slot name="header">
+                        <div> название картины </div>
+                        <div> цена картины </div>
+                    </slot>
+                </header>
+
+                <section class="modal-body">
+                    <slot name="body">
+                        картина
+                    </slot>
+                </section>
+
+                <footer class="modal-footer">
+                    <button type="button" class="button" @click="close">
+                        Закрыть!
+                    </button>
+                </footer>
+            </div>
+        </div>
+    </transition>
+</script>
+</body>
+</html>
